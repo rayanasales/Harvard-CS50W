@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Search</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="nav">
+      <a href="images.html">Image Search</a>
+      <a href="advanced.html">Advanced Search</a>
+    </div>
+
+    <div class="container">
+      <h1>Google</h1>
+      <form id="searchForm" action="https://www.google.com/search">
+        <input
+          type="text"
+          id="searchQuery"
+          name="q"
+          placeholder="Search Google"
+        />
+        <div class="buttons">
+          <input type="submit" value="Google Search" />
+          <input type="submit" name="btnI" value="I'm Feeling Lucky" />
+        </div>
+      </form>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("searchForm").onsubmit = function (event) {
+          const input = document.getElementById("searchQuery").value.trim();
+          if (!input) {
+            event.preventDefault();
+            alert("Please enter a search query.");
+          }
+        };
+      });
+    </script>
+  </body>
+</html>
