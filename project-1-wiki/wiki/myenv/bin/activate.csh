@@ -9,7 +9,7 @@ alias deactivate 'test $?_OLD_VIRTUAL_PATH != 0 && setenv PATH "$_OLD_VIRTUAL_PA
 # Unset irrelevant variables.
 deactivate nondestructive
 
-setenv VIRTUAL_ENV "/Users/rayanasales/Projects/Harvard CS50's Web Programming with Python and JavaScript/draft-projects/project-1-wiki/wiki/myenv"
+setenv VIRTUAL_ENV "/Users/rayanasales/Projects/Harvard-CS50W/project-1-wiki/wiki/myenv"
 
 set _OLD_VIRTUAL_PATH="$PATH"
 setenv PATH "$VIRTUAL_ENV/bin:$PATH"
