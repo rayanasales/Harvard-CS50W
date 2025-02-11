@@ -13,6 +13,6 @@ def entry(request, title):
             "message": "The requested page was not found."
         })
     return render(request, "encyclopedia/entry.html", {
-        "title": title,
-        "content": entry_content
+        "title": title.replace("#", "").replace("*", ""),
+        "content": entry_content.replace("#", "").replace("*", "")
     })
