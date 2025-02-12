@@ -28,10 +28,21 @@ def search(request):
             "query": query,
             "results": results
         })
+
+def create_new_page(request):
+    if request.method == "POST":
+        title = request.POST["title"]
+        content = request.POST["content"]
+        
+        if util.get_entry(title):
+            return render(request, "encyclopedia/new_page.html", {
+                "error": "An entry with this title already exists."
+            })
+        
+        util.save_entry(title, content)
+        return redirect("entry", title=title)
     
-def create(request):
-    # Add your create view logic here
-    return render(request, "encyclopedia/create.html")
+    return render(request, "encyclopedia/new_page.html")
 
 def random_page(request):
     # Add your random page logic here
