@@ -1,3 +1,7 @@
 Ariel is a fictional character in Walt Disney Pictures' animated film The Little Mermaid (1989). Voiced by Jodi Benson, Ariel is the youngest daughter of King Triton and Queen Athena of an underwater kingdom called Atlantica.[4][5] She is often rebellious, and in the first film, she longs to be a part of the human world. She marries Prince Eric, whom she rescued from a shipwreck, and together they have a daughter, Melody.[6] She is the fourth Disney Princess, the first Disney Princess to be developed during the Disney Renaissance, and the first Disney Princess since Aurora.
 
 The character is based on the title character of Hans Christian Andersen's 1837 fairy tale "The Little Mermaid" but was developed into a different personality for the 1989 animated film adaptation. Ariel has received a mixed reception from critics; some publications such as Time criticize her for being too devoted to Eric whereas others, such as Empire, praise the character for her rebellious personality, a departure from previous Disney Princesses' roles. Halle Bailey portrays a live-action version of the character in the 2023 live-action adaptation of the original 1989 film.
+
+Testando edicao
+
+Nossa funciona, irado demais!

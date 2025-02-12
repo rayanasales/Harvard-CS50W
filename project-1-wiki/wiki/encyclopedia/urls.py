@@ -6,6 +6,7 @@ urlpatterns = [
     re_path(r'^wiki/(?P<title>[\w-]+)/?$', views.entry, name="entry"),
     path("search", views.search, name="search"),
     path("create", views.create_new_page, name="create_new_page"),
+    path("edit/<str:title>", views.edit_page, name="edit_page"),
     path("random", views.random_page, name="random"),
 ]
 

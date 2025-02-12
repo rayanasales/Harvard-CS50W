@@ -44,6 +44,18 @@ def create_new_page(request):
     
     return render(request, "encyclopedia/new_page.html")
 
+def edit_page(request, title):
+    if request.method == "POST":
+        content = request.POST['content']
+        util.save_entry(title, content)
+        return redirect('entry', title=title)
+    else:
+        content = util.get_entry(title)
+        return render(request, "encyclopedia/edit_page.html", {
+            "title": title,
+            "content": content
+        })
+
 def random_page(request):
     # Add your random page logic here
     return render(request, "encyclopedia/random.html")
