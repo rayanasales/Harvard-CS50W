@@ -1,4 +1,5 @@
 import random
+import markdown2
 from django.shortcuts import render, redirect
 from . import util
 
@@ -13,9 +14,10 @@ def entry(request, title):
         return render(request, "encyclopedia/error.html", {
             "message": "The requested page was not found."
         })
+    html_content = markdown2.markdown(entry_content)
     return render(request, "encyclopedia/entry.html", {
-        "title": title.replace("#", "").replace("*", ""),
-        "content": entry_content.replace("#", "").replace("*", "")
+        "title": title,
+        "content": html_content
     })
 
 def search(request):
