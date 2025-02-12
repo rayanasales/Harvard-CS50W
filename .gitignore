@@ -1,0 +1,7 @@
+# Ignore __pycache__ directories
+__pycache__/
+
+# Other ignored files/folders
+*.pyc
+*.log
+.env
