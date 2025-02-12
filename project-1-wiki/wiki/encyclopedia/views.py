@@ -1,3 +1,4 @@
+import random
 from django.shortcuts import render, redirect
 from . import util
 
@@ -57,5 +58,6 @@ def edit_page(request, title):
         })
 
 def random_page(request):
-    # Add your random page logic here
-    return render(request, "encyclopedia/random.html")
+    entries = util.list_entries()
+    random_entry = random.choice(entries)
+    return redirect('entry', title=random_entry)

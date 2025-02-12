@@ -7,7 +7,7 @@ urlpatterns = [
     path("search", views.search, name="search"),
     path("create", views.create_new_page, name="create_new_page"),
     path("edit/<str:title>", views.edit_page, name="edit_page"),
-    path("random", views.random_page, name="random"),
+    path("random", views.random_page, name="random_page"),
 ]
 
 # The issue might be related to how Django handles URLs with trailing slashes. 
