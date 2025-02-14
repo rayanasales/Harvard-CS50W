@@ -1,7 +1,16 @@
-# Ignore __pycache__ directories
-__pycache__/
-
 # Other ignored files/folders
 *.pyc
 *.log
 .env
+
+# Ignore .pyc files
+*.pyc
+
+# Ignore the myenv directory
+myenv/
+
+# Ignore the project-1-wiki/wiki/myenv directory
+project-1-wiki/wiki/myenv/
+
+# Ignore __pycache__ directories
+__pycache__/
