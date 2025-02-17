@@ -97,3 +97,11 @@ def toggle_watchlist(request, listing_id):
     if not created:
         watchlist_item.delete()
     return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
+
+@login_required
+def watchlist(request):
+    watchlist_items = Watchlist.objects.filter(user=request.user)
+    listings = [item.listing for item in watchlist_items]
+    return render(request, "auctions/watchlist.html", {
+        "listings": listings
+    })
