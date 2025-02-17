@@ -1,11 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from .forms import AuctionListingForm
 
-from .models import User, AuctionListing
+from .models import User, AuctionListing, Watchlist
 
 
 def index(request):
@@ -77,3 +78,22 @@ def create_listing(request):
     else:
         form = AuctionListingForm()
     return render(request, 'auctions/create_listing.html', {'form': form})
+
+def listing(request, listing_id):
+    listing = AuctionListing.objects.get(id=listing_id)
+    is_in_watchlist = False
+    if request.user.is_authenticated:
+        is_in_watchlist = Watchlist.objects.filter(user=request.user, listing=listing).exists()
+    
+    return render(request, "auctions/listing.html", {
+        "listing": listing,
+        "is_in_watchlist": is_in_watchlist
+    })
+
+@login_required
+def toggle_watchlist(request, listing_id):
+    listing = AuctionListing.objects.get(id=listing_id)
+    watchlist_item, created = Watchlist.objects.get_or_create(user=request.user, listing=listing)
+    if not created:
+        watchlist_item.delete()
+    return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
