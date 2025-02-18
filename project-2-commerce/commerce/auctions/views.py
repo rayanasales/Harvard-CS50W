@@ -81,18 +81,11 @@ def listing_details(request, listing_id):
     is_in_watchlist = False
     winning_bid = listing.bids.aggregate(Max('amount'))['amount__max']
     highest_bid = listing.bids.filter(amount=winning_bid).first() if winning_bid else None
+    comments = Comment.objects.filter(listing=listing).order_by('-created_at')
 
     if request.user.is_authenticated:
         is_in_watchlist = Watchlist.objects.filter(user=request.user, listing=listing).exists()
 
-        # Handle closing the auction
-        if 'close_auction' in request.POST and request.user == listing.user and listing.is_active:
-            listing.is_active = False
-            listing.winner = highest_bid.user if highest_bid else None
-            listing.save()
-            return redirect('listing_details', listing_id=listing_id)
-
-    comments = Comment.objects.filter(listing=listing).order_by('-created_at')
     return render(request, "auctions/listing_details.html", {
         "listing": listing,
         "is_in_watchlist": is_in_watchlist,
@@ -118,6 +111,19 @@ def watchlist(request):
     return render(request, "auctions/watchlist.html", {
         "listings": listings
     })
+
+@login_required
+def close_auction(request, listing_id):
+    if request.method == "POST":
+        listing = AuctionListing.objects.get(id=listing_id)
+        if request.user == listing.user and listing.is_active:
+            listing.is_active = False
+            highest_bid = listing.bids.aggregate(Max('amount'))['amount__max']
+            highest_bidder = listing.bids.filter(amount=highest_bid).first().user if highest_bid else None
+            listing.winner = highest_bidder
+            listing.save()
+            return redirect('listing_details', listing_id=listing_id)
+    return redirect('listing_details', listing_id=listing_id)
 
 @login_required
 def place_bid(request, listing_id):

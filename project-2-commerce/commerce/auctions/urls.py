@@ -1,5 +1,4 @@
 from django.urls import path
-
 from . import views
 
 urlpatterns = [
@@ -12,5 +11,6 @@ urlpatterns = [
     path("listing/<int:listing_id>/toggle_watchlist", views.toggle_watchlist, name="toggle_watchlist"),
     path("watchlist", views.watchlist, name="watchlist"),
     path("listing/<int:listing_id>/place_bid", views.place_bid, name="place_bid"),
-    path("listing/<int:listing_id>/post_comment", views.post_comment, name="post_comment"),  # New URL for posting comments
+    path("listing/<int:listing_id>/post_comment", views.post_comment, name="post_comment"),
+    path("listing/<int:listing_id>/close_auction", views.close_auction, name="close_auction"),
 ]

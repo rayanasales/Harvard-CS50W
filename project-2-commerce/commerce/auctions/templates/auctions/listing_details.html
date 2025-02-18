@@ -59,9 +59,9 @@
     {% endif %}
 
     {% if user.is_authenticated and user == listing.user and listing.is_active %}
-        <form action="" method="post">
+        <form action="{% url 'close_auction' listing.id %}" method="post">
             {% csrf_token %}
-            <button type="submit" name="close_auction">Close Auction</button>
+            <button type="submit" name="close_auction" style="margin-top: 10px;">Close Auction</button>
         </form>
     {% endif %}
 
