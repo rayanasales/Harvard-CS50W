@@ -2,6 +2,7 @@ from decimal import Decimal
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.db.models import Max
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render, redirect
@@ -78,15 +79,27 @@ def create_listing(request):
 def listing_details(request, listing_id):
     listing = AuctionListing.objects.get(id=listing_id)
     is_in_watchlist = False
-    bids = listing.bids.all().order_by('-created_at')  # Get all bids for this listing, ordered by the most recent
+    winning_bid = listing.bids.aggregate(Max('amount'))['amount__max']
+    highest_bid = listing.bids.filter(amount=winning_bid).first() if winning_bid else None
 
     if request.user.is_authenticated:
         is_in_watchlist = Watchlist.objects.filter(user=request.user, listing=listing).exists()
 
+        # Handle closing the auction
+        if 'close_auction' in request.POST:
+            if request.user == listing.user and listing.is_active:
+                listing.is_active = False
+                listing.winner = highest_bid.user if highest_bid else None
+                listing.save()
+                return redirect('listing_details', listing_id=listing_id)
+
     return render(request, "auctions/listing_details.html", {
         "listing": listing,
         "is_in_watchlist": is_in_watchlist,
-        "bids": bids  # Pass the bids to the template
+        "bids": listing.bids.all().order_by('-created_at'),
+        "highest_bid": highest_bid,
+        "winner_message": "Congratulations! You have won this auction." if listing.winner == request.user else "",
+        "loser_message": f"The auction has been won by {listing.winner.username}." if listing.winner and listing.winner != request.user else ""
     })
 
 @login_required

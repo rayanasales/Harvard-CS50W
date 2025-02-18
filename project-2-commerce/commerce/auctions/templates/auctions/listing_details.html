@@ -27,14 +27,30 @@
         {% endif %}
     </div>
 
-    {% if user.is_authenticated and user != listing.user %}
-        <form action="{% url 'place_bid' listing.id %}" method="post">
+    {% if not listing.is_active %}
+        <h4>This auction has been closed</h4>
+        {% if listing.winner == user %}
+            <p style="color: green;">{{ winner_message }}</p>
+        {% else %}
+            <p style="color: red;">{{ loser_message }}</p>
+        {% endif %}
+    {% else %}
+        {% if user.is_authenticated and user != listing.user %}
+            <form action="{% url 'place_bid' listing.id %}" method="post">
+                {% csrf_token %}
+                <div>
+                    <label for="bid_amount">Your Bid:</label>
+                    <input type="number" name="bid_amount" id="bid_amount" min="{{ listing.starting_bid }}" step="0.01" required>
+                    <button type="submit">Place Bid</button>
+                </div>
+            </form>
+        {% endif %}
+    {% endif %}
+
+    {% if user.is_authenticated and user == listing.user and listing.is_active %}
+        <form action="" method="post">
             {% csrf_token %}
-            <div>
-                <label for="bid_amount">Your Bid:</label>
-                <input type="number" name="bid_amount" id="bid_amount" min="{{ listing.starting_bid }}" step="0.01" required>
-                <button type="submit">Place Bid</button>
-            </div>
+            <button type="submit" name="close_auction">Close Auction</button>
         </form>
     {% endif %}
 
