@@ -13,6 +13,31 @@
     <p><strong>Category:</strong> {{ listing.category }}</p>
     <p><strong>Created At:</strong> {{ listing.created_at }}</p>
 
+    <!-- Display bids -->
+    <div>
+        <h3>Bids</h3>
+        {% if bids %}
+            <ul>
+            {% for bid in bids %}
+                <li>${{ bid.amount }} by {{ bid.user.username }} on {{ bid.created_at }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No bids yet.</p>
+        {% endif %}
+    </div>
+
+    {% if user.is_authenticated and user != listing.user %}
+        <form action="{% url 'place_bid' listing.id %}" method="post">
+            {% csrf_token %}
+            <div>
+                <label for="bid_amount">Your Bid:</label>
+                <input type="number" name="bid_amount" id="bid_amount" min="{{ listing.starting_bid }}" step="0.01" required>
+                <button type="submit">Place Bid</button>
+            </div>
+        </form>
+    {% endif %}
+
     {% if user.is_authenticated %}
         <form action="{% url 'toggle_watchlist' listing.id %}" method="post" style="text-align: center; margin-top: 20px;">
             {% csrf_token %}

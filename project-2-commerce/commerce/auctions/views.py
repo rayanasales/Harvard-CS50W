@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -5,16 +6,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from .forms import AuctionListingForm
-
-from .models import User, AuctionListing, Watchlist
-
+from .models import User, AuctionListing, Watchlist, Bid
 
 def index(request):
     listings = AuctionListing.objects.all()
     return render(request, "auctions/index.html", {
         "listings": listings
     })
-
 
 def login_view(request):
     if request.method == "POST":
@@ -35,11 +33,9 @@ def login_view(request):
     else:
         return render(request, "auctions/login.html")
 
-
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
-
 
 def register(request):
     if request.method == "POST":
@@ -82,12 +78,15 @@ def create_listing(request):
 def listing(request, listing_id):
     listing = AuctionListing.objects.get(id=listing_id)
     is_in_watchlist = False
+    bids = listing.bids.all().order_by('-created_at')  # Get all bids for this listing, ordered by the most recent
+
     if request.user.is_authenticated:
         is_in_watchlist = Watchlist.objects.filter(user=request.user, listing=listing).exists()
-    
+
     return render(request, "auctions/listing.html", {
         "listing": listing,
-        "is_in_watchlist": is_in_watchlist
+        "is_in_watchlist": is_in_watchlist,
+        "bids": bids  # Pass the bids to the template
     })
 
 @login_required
@@ -105,3 +104,23 @@ def watchlist(request):
     return render(request, "auctions/watchlist.html", {
         "listings": listings
     })
+
+@login_required
+def place_bid(request, listing_id):
+    if request.method == "POST":
+        listing = AuctionListing.objects.get(id=listing_id)
+        bid_amount = Decimal(request.POST.get('bid_amount'))
+        
+        # Check if the bid is higher than the current and starting bid
+        if bid_amount >= listing.starting_bid and (not listing.bids.exists() or bid_amount > listing.bids.latest('created_at').amount):
+            new_bid = Bid(listing=listing, user=request.user, amount=bid_amount)
+            new_bid.save()
+            return redirect('listing', listing_id=listing_id)
+        else:
+            return render(request, "auctions/listing.html", {
+                "listing": listing,
+                "error_message": "Your bid must be higher than the current highest bid.",
+                "is_in_watchlist": Watchlist.objects.filter(user=request.user, listing=listing).exists()
+            })
+    else:
+        return HttpResponseRedirect(reverse('listing', args=[listing_id]))
