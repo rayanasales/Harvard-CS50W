@@ -75,7 +75,7 @@ def create_listing(request):
         form = AuctionListingForm()
     return render(request, 'auctions/create_listing.html', {'form': form})
 
-def listing(request, listing_id):
+def listing_details(request, listing_id):
     listing = AuctionListing.objects.get(id=listing_id)
     is_in_watchlist = False
     bids = listing.bids.all().order_by('-created_at')  # Get all bids for this listing, ordered by the most recent
@@ -83,7 +83,7 @@ def listing(request, listing_id):
     if request.user.is_authenticated:
         is_in_watchlist = Watchlist.objects.filter(user=request.user, listing=listing).exists()
 
-    return render(request, "auctions/listing.html", {
+    return render(request, "auctions/listing_details.html", {
         "listing": listing,
         "is_in_watchlist": is_in_watchlist,
         "bids": bids  # Pass the bids to the template
@@ -95,7 +95,7 @@ def toggle_watchlist(request, listing_id):
     watchlist_item, created = Watchlist.objects.get_or_create(user=request.user, listing=listing)
     if not created:
         watchlist_item.delete()
-    return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
+    return HttpResponseRedirect(reverse("listing_details", args=(listing_id,)))
 
 @login_required
 def watchlist(request):
@@ -115,9 +115,9 @@ def place_bid(request, listing_id):
         if bid_amount >= listing.starting_bid and (not listing.bids.exists() or bid_amount > listing.bids.latest('created_at').amount):
             new_bid = Bid(listing=listing, user=request.user, amount=bid_amount)
             new_bid.save()
-            return redirect('listing', listing_id=listing_id)
+            return redirect('listing_details', listing_id=listing_id)
         else:
-            return render(request, "auctions/listing.html", {
+            return render(request, "auctions/listing_details.html", {
                 "listing": listing,
                 "error_message": "Your bid must be higher than the current highest bid.",
                 "is_in_watchlist": Watchlist.objects.filter(user=request.user, listing=listing).exists()
