@@ -3,11 +3,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Max
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from .forms import AuctionListingForm
-from .models import User, AuctionListing, Watchlist, Bid
+from .models import User, AuctionListing, Watchlist, Bid, Comment
 
 def index(request):
     listings = AuctionListing.objects.all()
@@ -86,20 +86,21 @@ def listing_details(request, listing_id):
         is_in_watchlist = Watchlist.objects.filter(user=request.user, listing=listing).exists()
 
         # Handle closing the auction
-        if 'close_auction' in request.POST:
-            if request.user == listing.user and listing.is_active:
-                listing.is_active = False
-                listing.winner = highest_bid.user if highest_bid else None
-                listing.save()
-                return redirect('listing_details', listing_id=listing_id)
+        if 'close_auction' in request.POST and request.user == listing.user and listing.is_active:
+            listing.is_active = False
+            listing.winner = highest_bid.user if highest_bid else None
+            listing.save()
+            return redirect('listing_details', listing_id=listing_id)
 
+    comments = Comment.objects.filter(listing=listing).order_by('-created_at')
     return render(request, "auctions/listing_details.html", {
         "listing": listing,
         "is_in_watchlist": is_in_watchlist,
         "bids": listing.bids.all().order_by('-created_at'),
         "highest_bid": highest_bid,
         "winner_message": "Congratulations! You have won this auction." if listing.winner == request.user else "",
-        "loser_message": f"The auction has been won by {listing.winner.username}." if listing.winner and listing.winner != request.user else ""
+        "loser_message": f"The auction has been won by {listing.winner.username}." if listing.winner and listing.winner != request.user else "",
+        "comments": comments
     })
 
 @login_required
@@ -137,3 +138,13 @@ def place_bid(request, listing_id):
             })
     else:
         return HttpResponseRedirect(reverse('listing', args=[listing_id]))
+    
+@login_required
+def post_comment(request, listing_id):
+    if request.method == "POST":
+        content = request.POST.get('content')
+        if content:
+            listing = AuctionListing.objects.get(id=listing_id)
+            Comment.objects.create(listing=listing, user=request.user, content=content)
+        return HttpResponseRedirect(reverse('listing_details', args=[listing_id]))
+    return HttpResponseRedirect(reverse('index'))  # Redirect to index if not a POST request or if content is empty

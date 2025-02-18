@@ -12,4 +12,5 @@ urlpatterns = [
     path("listing/<int:listing_id>/toggle_watchlist", views.toggle_watchlist, name="toggle_watchlist"),
     path("watchlist", views.watchlist, name="watchlist"),
     path("listing/<int:listing_id>/place_bid", views.place_bid, name="place_bid"),
+    path("listing/<int:listing_id>/post_comment", views.post_comment, name="post_comment"),  # New URL for posting comments
 ]
