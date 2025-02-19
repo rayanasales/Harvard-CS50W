@@ -154,3 +154,11 @@ def post_comment(request, listing_id):
             Comment.objects.create(listing=listing, user=request.user, content=content)
         return HttpResponseRedirect(reverse('listing_details', args=[listing_id]))
     return HttpResponseRedirect(reverse('index'))  # Redirect to index if not a POST request or if content is empty
+
+def categories(request):
+    categories = AuctionListing.objects.values_list('category', flat=True).distinct()
+    return render(request, "auctions/categories.html", {"categories": categories})
+
+def category_listings(request, category_name):
+    listings = AuctionListing.objects.filter(category=category_name, is_active=True)
+    return render(request, "auctions/category_listings.html", {"listings": listings, "category_name": category_name})
