@@ -32,6 +32,11 @@
       document.body.appendChild(form);
       form.submit();
   }
+
+  function redirectToDetails(button) {
+    var listingId = button.getAttribute('data-id');
+    window.location.href = `/listing/${listingId}`;
+  }
 </script>
 
 {% for listing in listings %}
@@ -45,6 +50,14 @@
             <p>{{ listing.description }}</p>
             <p style="font-weight: bold; color: #000;">Price: ${{ listing.starting_bid }}</p>
             <p style="font-size: 0.9em; color: #999;">Created {{ listing.created_at }}</p>
+
+            <button type="button" 
+                    data-id="{{ listing.id }}" 
+                    style="border-radius: 4px; background-color: rgba(0, 0, 0, 0.1); color: rgb(0, 0, 0); border: 1px solid rgba(0, 0, 0, 0.1)" 
+                    onclick="redirectToDetails(this)">
+                View Details
+            </button>
+
             {% if user.is_authenticated and user == listing.user or user.is_staff %}
               <button type="button" onclick="showModal('{{ listing.id }}')" style="border-radius: 4px; background-color: rgba(0, 0, 0, 0.1); color: rgb(0, 0, 0); border: 1px solid rgba(0, 0, 0, 0.1)">Delete</button>
             {% endif %}
@@ -62,8 +75,14 @@
       <p>Are you sure you want to delete this listing?</p>
       <!-- Hidden input for CSRF token -->
       <input type="hidden" id="csrfTokenInput" value="{{ csrf_token }}">
-      <button type="button" onclick="confirmDelete()" style="color: white; background-color: green;">Yes, Delete it</button>
-      <button type="button" onclick="document.getElementById('deleteModal').style.display='none'" style="color: white; background-color: red;">Cancel</button>
+      <button type="button" onclick="confirmDelete()" style="border-radius: 4px; background-color: rgba(255, 0, 0, 0.1); color: rgb(0, 0, 0); border: 1px solid rgba(0, 0, 0, 0.1)">
+        Yes, Delete it
+      </button>
+      <button type="button" 
+        onclick="document.getElementById('deleteModal').style.display='none'"
+        style="border-radius: 4px; background-color: rgba(0, 0, 0, 0.1); background-color: rgba(68, 255, 0, 0.1); border: 1px solid rgba(0, 0, 0, 0.1)">
+        Cancel
+      </button>
   </div>
 </div>
 </body>
