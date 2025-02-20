@@ -97,6 +97,15 @@ def listing_details(request, listing_id):
     })
 
 @login_required
+def delete_listing(request, listing_id):
+    listing = AuctionListing.objects.get(id=listing_id)
+    if request.user == listing.user or request.user.is_staff:
+        listing.delete()
+        return redirect('index')
+    else:
+        return redirect('listing_details', listing_id=listing_id)
+
+@login_required
 def toggle_watchlist(request, listing_id):
     listing = AuctionListing.objects.get(id=listing_id)
     watchlist_item, created = Watchlist.objects.get_or_create(user=request.user, listing=listing)

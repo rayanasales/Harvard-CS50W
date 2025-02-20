@@ -1,19 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<script>
+  var currentListingId = 0;  // This will store the current listing ID to be deleted
+
+  function showModal(listingId) {
+      currentListingId = listingId;
+      document.getElementById('deleteModal').style.display = 'block';
+  }
+
+  function confirmDelete() {
+      document.getElementById('deleteModal').style.display = 'none';
+      var form = document.createElement('form');
+      form.method = 'post';
+      form.action = `/listing/${currentListingId}/delete`;
+
+      // Get CSRF token from a hidden input within the modal
+      var csrfToken = document.getElementById('csrfTokenInput').value;
+      var inputCsrf = document.createElement('input');
+      inputCsrf.type = 'hidden';
+      inputCsrf.name = 'csrfmiddlewaretoken';
+      inputCsrf.value = csrfToken;
+      form.appendChild(inputCsrf);
+
+      document.body.appendChild(form);
+      form.submit();
+  }
+</script>
+
 {% for listing in listings %}
-<a href="{% url 'listing_details' listing.id %}" style="text-decoration: none; color: inherit;">
-  <div style="border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-      <div style="display: flex; align-items: center; gap: 20px;">
-      {% if listing.image_url %}
-          <img src="{{ listing.image_url }}" alt="{{ listing.title }}" style="max-width: 300px; height: auto; border-radius: 4px;">
-      {% endif %}
-      <div>
-          <h3 style="margin-bottom: 5px;">{{ listing.title }}</h3>
-          <p>{{ listing.description }}</p>
-          <p style="font-weight: bold; color: #000;">Price: ${{ listing.starting_bid }}</p>
-          <p style="font-size: 0.9em; color: #999;">Created {{ listing.created_at }}</p>
-      </div>
-      </div>
-  </div>
-</a>
+<div style="border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+    <div style="display: flex; align-items: center; gap: 20px;">
+        {% if listing.image_url %}
+            <img src="{{ listing.image_url }}" alt="{{ listing.title }}" style="max-width: 300px; height: auto; border-radius: 4px;">
+        {% endif %}
+        <div>
+            <h3 style="margin-bottom: 5px;">{{ listing.title }}</h3>
+            <p>{{ listing.description }}</p>
+            <p style="font-weight: bold; color: #000;">Price: ${{ listing.starting_bid }}</p>
+            <p style="font-size: 0.9em; color: #999;">Created {{ listing.created_at }}</p>
+            {% if user.is_authenticated and user == listing.user or user.is_staff %}
+              <button type="button" onclick="showModal('{{ listing.id }}')" style="border-radius: 4px; background-color: rgba(0, 0, 0, 0.1); color: rgb(0, 0, 0); border: 1px solid rgba(0, 0, 0, 0.1)">Delete</button>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% empty %}
-  <p>No listings found.</p>
+    <p>No listings found.</p>
 {% endfor %}
+
+<!-- Modal for delete confirmation -->
+<div id="deleteModal" style="display:none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4); padding-top: 100px;">
+  <div style="background-color: #fefefe; margin: auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px;">
+      <h2>Confirm Deletion</h2>
+      <p>Are you sure you want to delete this listing?</p>
+      <!-- Hidden input for CSRF token -->
+      <input type="hidden" id="csrfTokenInput" value="{{ csrf_token }}">
+      <button type="button" onclick="confirmDelete()" style="color: white; background-color: green;">Yes, Delete it</button>
+      <button type="button" onclick="document.getElementById('deleteModal').style.display='none'" style="color: white; background-color: red;">Cancel</button>
+  </div>
+</div>
+</body>
+</html>
