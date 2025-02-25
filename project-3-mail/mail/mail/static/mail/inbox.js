@@ -44,14 +44,10 @@ async function load_mailbox(mailbox) {
           <div style="display: flex;">
             <div style="color: grey;">${email.timestamp}</div>
             <div class="archive-content" style="margin-left: 15px;">
-              <button onclick="archive_email(event, ${email.id}, ${email.archived})">${email.archived ? 'Unarchive' : 'Archive'}</button>
+              ${mailbox !== 'sent' ? `<button onclick="archive_email(event, ${email.id}, ${email.archived})">${email.archived ? 'Unarchive' : 'Archive'}</button>` : ''}
             </div>
           </div>
         `;
-        if (mailbox === 'sent') { // No archive button for 'Sent' emails
-          const archiveButton = document.querySelector('.archive-content');
-          archiveButton.style.display = 'none';
-        }
         emailDiv.addEventListener('click', () => display_email(email.id));
         document.querySelector('#emails-view').append(emailDiv);
       });
@@ -59,7 +55,8 @@ async function load_mailbox(mailbox) {
       throw new Error('Failed to load emails');
     }
   } catch (error) {
-    throw new Error(error);
+    console.error('Error:', error);
+    alert(`Failed to load ${mailbox}: ${error.message}`);
   }
 }
 
