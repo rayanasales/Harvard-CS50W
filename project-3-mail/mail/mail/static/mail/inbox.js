@@ -69,14 +69,14 @@ async function display_email(email_id) {
     const response = await fetch(`/emails/${email_id}`);
     const email = await response.json();
     if (response.ok) {
-      
       document.querySelector('#emails-view').innerHTML = `
         <div class="email-details">
           <b>From:</b> ${email.sender}<br>
           <b>To:</b> ${email.recipients.join(', ')}<br>
           <b>Subject:</b> ${email.subject}<br>
           <b>Timestamp:</b> ${email.timestamp}<br>
-          <button onclick="mark_email_as_unread(${email.id})">Mark as Unread</button>
+          <button onclick="mark_email_as_unread(${email_id})">Mark as Unread</button>
+          <button onclick="reply_email(${email_id})">Reply</button>
           <hr>
           ${email.body}<br>
         </div>
@@ -159,6 +159,19 @@ async function send_email(event) {
   }
 }
 
+function reply_email(email_id) {
+  fetch(`/emails/${email_id}`)
+    .then(response => response.json())
+    .then(email => {
+      document.querySelector('#compose-view').style.display = 'block';
+      document.querySelector('#emails-view').style.display = 'none';
+      document.querySelector('#compose-recipients').value = email.sender;
+      document.querySelector('#compose-subject').value = email.subject.startsWith('Re:') ? email.subject : `Re: ${email.subject}`;
+      document.querySelector('#compose-body').value = `\n\nOn ${email.timestamp}, ${email.sender} wrote:\n>${email.body}`;
+    })
+    .catch(error => console.error('Reply Email Error:', error));
+}
+
 async function archive_email(event, email_id, archived) {
   event.stopPropagation();
   try {
@@ -178,6 +191,6 @@ async function archive_email(event, email_id, archived) {
       alert(`Failed to update email status: Error status code: ${response.status}`);
     }
   } catch (error) {
-    alert("We encountered an error while updating the email status.");
+    alert(`We encountered an error while updating the email status. Error: ${error.message}`);
   }
 }
