@@ -1,0 +1,15 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<div class="container mt-4" style="border: 1px solid #ccc; padding: 1.5rem;">
+    <h3>New Post</h3>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Post</button>
+    </form>
+</div>
+{% endblock %}

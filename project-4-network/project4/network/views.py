@@ -3,12 +3,12 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-
-from .models import User
-
+from django.contrib.auth.decorators import login_required
+from .models import User, Post
 
 def index(request):
-    return render(request, "network/index.html")
+    posts = Post.objects.all().order_by('-timestamp')
+    return render(request, "network/index.html", {"posts": posts})
 
 
 def login_view(request):
@@ -61,3 +61,30 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+@login_required
+def new_post(request):
+    if request.method == "POST":
+        content = request.POST["content"]
+        post = Post(user=request.user, content=content)
+        post.save()
+        return HttpResponseRedirect(reverse("index"))
+    return render(request, "network/new_post.html") 
+
+@login_required
+def follow_toggle(request, username):
+    target_user = User.objects.get(username=username)
+    if target_user in request.user.following.all():
+        request.user.following.remove(target_user)
+    else:
+        request.user.following.add(target_user)
+    return HttpResponseRedirect(reverse("index"))
+
+@login_required
+def like_toggle(request, post_id):
+    post = Post.objects.get(id=post_id)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+    return HttpResponseRedirect(reverse("index"))
