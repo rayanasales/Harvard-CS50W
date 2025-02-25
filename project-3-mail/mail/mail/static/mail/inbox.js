@@ -42,7 +42,7 @@ async function load_mailbox(mailbox) {
             <div style="margin-left: 15px; white-space: nowrap; max-width: 500px; overflow: hidden; text-overflow: ellipsis;">${email.subject}</div>
           </div>
           <div style="display: flex;">
-            <div style="color: grey;">${email.timestamp}</div>
+            <div style="color: black;">${email.timestamp}</div>
             <div class="archive-content" style="margin-left: 15px;">
               ${mailbox !== 'sent' ? `<button onclick="archive_email(event, ${email.id}, ${email.archived})">${email.archived ? 'Unarchive' : 'Archive'}</button>` : ''}
             </div>
