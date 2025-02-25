@@ -142,14 +142,9 @@ async function send_email(event) {
         body: body
       })
     });
-
-    const result = await response.json();
-
+    await response.json();
     if (response.ok) {
-      alert("Email sent successfully.");
       load_mailbox('sent');
-    } else {
-      alert("Error: " + result.error);
     }
   } catch (error) {
     alert("We got an error while sending the email.");
