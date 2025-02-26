@@ -1,6 +1,16 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
+<style>
+    .like-btn {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        outline: none;
+    }
+</style>
 <div class="container">
     <h2 class="mt-4">All Posts</h2>
     {% for post in posts %}
@@ -8,38 +18,33 @@
             <p><strong>{{ post.user.username }}</strong> posted on {{ post.timestamp|date:"N j, Y, P" }}</p>
             <p style="text-align: justify;">{{ post.content }}</p>
             <button class="like-btn" data-id="{{ post.id }}" data-liked="{% if request.user in post.likes.all %}true{% else %}false{% endif %}">
-                {% if request.user in post.likes.all %}
-                    Unlike
-                {% else %}
-                    Like
-                {% endif %}
+                <img src="{% static 'network/heart_icon_' %}{% if request.user in post.likes.all %}red{% else %}gray{% endif %}.svg" class="heart-icon" alt="like">
             </button>
-            <span>Likes: {{ post.likes.count }}</span>
+            <span>{{ post.likes.count }}</span>
         </div>
     {% endfor %}
 </div>
+
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll('.like-btn').forEach(button => {
-            button.onclick = function() {
-                const postId = this.dataset.id;
-                fetch(`/like/${postId}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    this.textContent = data.liked ? 'Unlike' : 'Like';
-                    this.dataset.liked = data.liked.toString();
-                    // Update the like count display
-                    const likeCountElement = this.nextElementSibling;
-                    likeCountElement.textContent = `Likes: ${data.like_count}`;
-                })
-                .catch(error => console.error('Error:', error));
-            };
-        });
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.like-btn').forEach(button => {
+        button.onclick = function() {
+            const postId = this.dataset.id;
+            const heartIcon = this.querySelector('.heart-icon');
+            fetch(`/like/${postId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                heartIcon.src = data.liked ? '{% static "network/heart_icon_red.svg" %}' : '{% static "network/heart_icon_gray.svg" %}';
+                this.nextElementSibling.textContent = data.like_count;
+            })
+            .catch(error => console.error('Error:', error));
+        };
     });
+});
 </script>
 {% endblock %}
