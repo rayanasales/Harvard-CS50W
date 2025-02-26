@@ -7,8 +7,39 @@
         <div class="post container mt-4" style="border: 1px solid #ccc; padding: 1rem;">
             <p><strong>{{ post.user.username }}</strong> posted on {{ post.timestamp|date:"N j, Y, P" }}</p>
             <p style="text-align: justify;">{{ post.content }}</p>
-            <p style="margin-bottom: 0;">Likes: {{ post.likes.count }}</p>
+            <button class="like-btn" data-id="{{ post.id }}" data-liked="{% if request.user in post.likes.all %}true{% else %}false{% endif %}">
+                {% if request.user in post.likes.all %}
+                    Unlike
+                {% else %}
+                    Like
+                {% endif %}
+            </button>
+            <span>Likes: {{ post.likes.count }}</span>
         </div>
     {% endfor %}
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.like-btn').forEach(button => {
+            button.onclick = function() {
+                const postId = this.dataset.id;
+                fetch(`/like/${postId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    this.textContent = data.liked ? 'Unlike' : 'Like';
+                    this.dataset.liked = data.liked.toString();
+                    // Update the like count display
+                    const likeCountElement = this.nextElementSibling;
+                    likeCountElement.textContent = `Likes: ${data.like_count}`;
+                })
+                .catch(error => console.error('Error:', error));
+            };
+        });
+    });
+</script>
 {% endblock %}

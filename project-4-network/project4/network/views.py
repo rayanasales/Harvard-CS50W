@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from .models import User, Post
 
 def index(request):
@@ -87,4 +88,4 @@ def like_toggle(request, post_id):
         post.likes.remove(request.user)
     else:
         post.likes.add(request.user)
-    return HttpResponseRedirect(reverse("index"))
+    return JsonResponse({'liked': request.user in post.likes.all(), 'like_count': post.likes.count()})
