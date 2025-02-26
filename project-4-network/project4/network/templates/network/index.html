@@ -9,6 +9,7 @@
             <div class="info-content">
                 <p><strong>{{ post.user.username }}</strong> posted on {{ post.timestamp|date:"N j, Y, P" }}</p>
                 <p style="text-align: justify;">{{ post.content }}</p>
+                <textarea class="form-control edit-content mb-4" id="edit-content-{{ post.id }}" style="display: none; width: 100%;" rows="5">{{ post.content }}</textarea>
             </div>
             <div class="buttons-content" style="display: flex; justify-content: space-between;">
                 <div class="like-content">
@@ -22,10 +23,10 @@
                     <span>{{ post.likes.count }}</span>
                 </div>
                 {% if user == post.user %}
-                    <div class="edit-content">
+                    <div class="controls-content">
                         <button class="edit-btn btn btn-sm btn-outline-primary" data-id="{{ post.id }}">Edit</button>
-                        <textarea class="form-control edit-content" id="edit-content-{{ post.id }}" style="display: none;" rows="3">{{ post.content }}</textarea>
                         <button class="save-btn btn btn-sm btn-outline-primary" data-id="{{ post.id }}" style="display: none;">Save</button>
+                        <button class="cancel-btn btn btn-sm btn-outline-primary" data-id="{{ post.id }}" style="display: none;">Cancel</button>
                     </div>
                 {% endif %}
             </div>
@@ -34,70 +35,96 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll('.like-btn').forEach(button => {
-        button.onclick = function() {
-            const postId = this.dataset.id;
-            const heartIcon = this.querySelector('.heart-icon');
-            fetch(`/like/${postId}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                heartIcon.src = data.liked ? '{% static "network/heart_icon_red.svg" %}' : '{% static "network/heart_icon_gray.svg" %}';
-                this.nextElementSibling.textContent = data.like_count;
-            })
-            .catch(error => console.error('Error:', error));
-        };
-    });
-
-    // Edit button functionality
-    document.querySelectorAll('.edit-btn').forEach(button => {
-        button.onclick = function() {
-            const postId = this.dataset.id;
-            const contentP = this.parentElement.querySelector('p:nth-of-type(2)'); // Assuming content is the second <p> tag
-            const textarea = this.parentElement.querySelector('.edit-content');
-            const saveBtn = this.parentElement.querySelector('.save-btn');
-
-            // Toggle visibility
-            contentP.style.display = 'none';
-            textarea.style.display = 'block';
-            saveBtn.style.display = 'inline-block';
-            this.style.display = 'none';
-        };
-    });
-
-    // Save button functionality
-    document.querySelectorAll('.save-btn').forEach(button => {
-        button.onclick = function() {
-            const postId = this.dataset.id;
-            const contentP = this.parentElement.querySelector('p:nth-of-type(2)');
-            const textarea = this.parentElement.querySelector('.edit-content');
-            const editBtn = this.parentElement.querySelector('.edit-btn');
-
-            fetch(`/edit/${postId}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({content: textarea.value})
-            })
-            .then(response => response.json())
-            .then(data => {
-                contentP.textContent = textarea.value;
-                // Toggle visibility back
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.like-btn').forEach(button => {
+            button.onclick = function() {
+                const postId = this.dataset.id;
+                const heartIcon = this.querySelector('.heart-icon');
+                fetch(`/like/${postId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    heartIcon.src = data.liked ? '{% static "network/heart_icon_red.svg" %}' : '{% static "network/heart_icon_gray.svg" %}';
+                    this.nextElementSibling.textContent = data.like_count;
+                })
+                .catch(error => console.error('Error:', error));
+            };
+        });
+    
+        // Edit button functionality
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.onclick = function() {
+                const postId = this.dataset.id;
+                const postContainer = this.closest('.post');
+                const contentP = postContainer.querySelector('.info-content p:nth-of-type(2)');
+                const textarea = postContainer.querySelector(`#edit-content-${postId}`);
+                const saveBtn = postContainer.querySelector('.save-btn');
+                const cancelBtn = postContainer.querySelector('.cancel-btn');
+    
+                // Toggle visibility for editing
+                contentP.style.display = 'none';
+                textarea.style.display = 'block';
+                saveBtn.style.display = 'inline-block';
+                cancelBtn.style.display = 'inline-block';
+                this.style.display = 'none';
+            };
+        });
+    
+        // Save button functionality
+        document.querySelectorAll('.save-btn').forEach(button => {
+            button.onclick = function() {
+                const postId = this.dataset.id;
+                const postContainer = this.closest('.post');
+                const contentP = postContainer.querySelector('.info-content p:nth-of-type(2)');
+                const textarea = postContainer.querySelector(`#edit-content-${postId}`);
+                const editBtn = postContainer.querySelector('.edit-btn');
+                const cancelBtn = postContainer.querySelector('.cancel-btn');
+    
+                fetch(`/edit/${postId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({content: textarea.value})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    contentP.textContent = textarea.value;
+                    // Toggle visibility back
+                    contentP.style.display = 'block';
+                    textarea.style.display = 'none';
+                    this.style.display = 'none';
+                    cancelBtn.style.display = 'none';
+                    editBtn.style.display = 'inline-block';
+                })
+                .catch(error => console.error('Error:', error));
+            };
+        });
+    
+        // Cancel button functionality
+        document.querySelectorAll('.cancel-btn').forEach(button => {
+            button.onclick = function() {
+                const postId = this.dataset.id;
+                const postContainer = this.closest('.post');
+                const contentP = postContainer.querySelector('.info-content p:nth-of-type(2)');
+                const textarea = postContainer.querySelector(`#edit-content-${postId}`);
+                const editBtn = postContainer.querySelector('.edit-btn');
+                const saveBtn = postContainer.querySelector('.save-btn');
+    
+                // Revert to original visibility without saving
                 contentP.style.display = 'block';
                 textarea.style.display = 'none';
                 this.style.display = 'none';
+                saveBtn.style.display = 'none';
                 editBtn.style.display = 'inline-block';
-            })
-            .catch(error => console.error('Error:', error));
-        };
+            };
+        });  
     });
-});
-</script>
+    </script>    
+
 {% endblock %}
