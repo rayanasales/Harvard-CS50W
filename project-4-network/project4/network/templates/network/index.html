@@ -2,25 +2,33 @@
 {% load static %}
 
 {% block body %}
-<style>
-    .like-btn {
-        background: none;
-        border: none;
-        padding: 0;
-        cursor: pointer;
-        outline: none;
-    }
-</style>
 <div class="container">
     <h2 class="mt-4">All Posts</h2>
     {% for post in posts %}
         <div class="post container mt-4" style="border: 1px solid #ccc; padding: 1rem;">
-            <p><strong>{{ post.user.username }}</strong> posted on {{ post.timestamp|date:"N j, Y, P" }}</p>
-            <p style="text-align: justify;">{{ post.content }}</p>
-            <button class="like-btn" data-id="{{ post.id }}" data-liked="{% if request.user in post.likes.all %}true{% else %}false{% endif %}">
-                <img src="{% static 'network/heart_icon_' %}{% if request.user in post.likes.all %}red{% else %}gray{% endif %}.svg" class="heart-icon" alt="like">
-            </button>
-            <span>{{ post.likes.count }}</span>
+            <div class="info-content">
+                <p><strong>{{ post.user.username }}</strong> posted on {{ post.timestamp|date:"N j, Y, P" }}</p>
+                <p style="text-align: justify;">{{ post.content }}</p>
+            </div>
+            <div class="buttons-content" style="display: flex; justify-content: space-between;">
+                <div class="like-content">
+                    <button class="like-btn"
+                            data-id="{{ post.id }}" 
+                            data-liked="{% if request.user in post.likes.all %}true{% else %}false{% endif %}" 
+                            style="background: none; border: none; padding: 0; cursor: pointer; outline: none;"
+                    >
+                        <img class="heart-icon" alt="like" src="{% static 'network/heart_icon_' %}{% if request.user in post.likes.all %}red{% else %}gray{% endif %}.svg">
+                    </button>
+                    <span>{{ post.likes.count }}</span>
+                </div>
+                {% if user == post.user %}
+                    <div class="edit-content">
+                        <button class="edit-btn btn btn-sm btn-outline-primary" data-id="{{ post.id }}">Edit</button>
+                        <textarea class="form-control edit-content" id="edit-content-{{ post.id }}" style="display: none;" rows="3">{{ post.content }}</textarea>
+                        <button class="save-btn btn btn-sm btn-outline-primary" data-id="{{ post.id }}" style="display: none;">Save</button>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     {% endfor %}
 </div>
@@ -41,6 +49,51 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(data => {
                 heartIcon.src = data.liked ? '{% static "network/heart_icon_red.svg" %}' : '{% static "network/heart_icon_gray.svg" %}';
                 this.nextElementSibling.textContent = data.like_count;
+            })
+            .catch(error => console.error('Error:', error));
+        };
+    });
+
+    // Edit button functionality
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.onclick = function() {
+            const postId = this.dataset.id;
+            const contentP = this.parentElement.querySelector('p:nth-of-type(2)'); // Assuming content is the second <p> tag
+            const textarea = this.parentElement.querySelector('.edit-content');
+            const saveBtn = this.parentElement.querySelector('.save-btn');
+
+            // Toggle visibility
+            contentP.style.display = 'none';
+            textarea.style.display = 'block';
+            saveBtn.style.display = 'inline-block';
+            this.style.display = 'none';
+        };
+    });
+
+    // Save button functionality
+    document.querySelectorAll('.save-btn').forEach(button => {
+        button.onclick = function() {
+            const postId = this.dataset.id;
+            const contentP = this.parentElement.querySelector('p:nth-of-type(2)');
+            const textarea = this.parentElement.querySelector('.edit-content');
+            const editBtn = this.parentElement.querySelector('.edit-btn');
+
+            fetch(`/edit/${postId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({content: textarea.value})
+            })
+            .then(response => response.json())
+            .then(data => {
+                contentP.textContent = textarea.value;
+                // Toggle visibility back
+                contentP.style.display = 'block';
+                textarea.style.display = 'none';
+                this.style.display = 'none';
+                editBtn.style.display = 'inline-block';
             })
             .catch(error => console.error('Error:', error));
         };

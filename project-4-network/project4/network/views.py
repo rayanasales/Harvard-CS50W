@@ -6,6 +6,8 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import User, Post
+import json
+
 
 def index(request):
     posts = Post.objects.all().order_by('-timestamp')
@@ -63,6 +65,7 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
+
 @login_required
 def new_post(request):
     if request.method == "POST":
@@ -71,6 +74,7 @@ def new_post(request):
         post.save()
         return HttpResponseRedirect(reverse("index"))
     return render(request, "network/new_post.html") 
+
 
 @login_required
 def follow_toggle(request, username):
@@ -81,6 +85,7 @@ def follow_toggle(request, username):
         request.user.following.add(target_user)
     return HttpResponseRedirect(reverse("index"))
 
+
 @login_required
 def like_toggle(request, post_id):
     post = Post.objects.get(id=post_id)
@@ -89,3 +94,16 @@ def like_toggle(request, post_id):
     else:
         post.likes.add(request.user)
     return JsonResponse({'liked': request.user in post.likes.all(), 'like_count': post.likes.count()})
+
+
+@login_required
+def edit_post(request, post_id):
+    post = Post.objects.get(id=post_id)
+    if request.user != post.user:
+        return JsonResponse({'error': 'You do not have permission to edit this post'}, status=403)
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        post.content = data['content']
+        post.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
