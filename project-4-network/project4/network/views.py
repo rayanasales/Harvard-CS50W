@@ -5,13 +5,20 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .models import User, Post
+from django.core.paginator import Paginator
 import json
+
+from .models import User, Post
 
 
 def index(request):
-    posts = Post.objects.all().order_by('-timestamp')
-    return render(request, "network/index.html", {"posts": posts})
+    post_list = Post.objects.all().order_by('-timestamp')
+    paginator = Paginator(post_list, 10)  # Show 10 posts per page.
+
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+
+    return render(request, "network/index.html", {'page': page})
 
 
 def login_view(request):

@@ -4,7 +4,7 @@
 {% block body %}
 <div class="container">
     <h2 class="mt-4">All Posts</h2>
-    {% for post in posts %}
+    {% for post in page %}
         <div class="post container mt-4" style="border: 1px solid #ccc; padding: 1rem;">
             <div class="info-content">
                 <p><strong>{{ post.user.username }}</strong> posted on {{ post.timestamp|date:"N j, Y, P" }}</p>
@@ -32,6 +32,24 @@
             </div>
         </div>
     {% endfor %}
+
+    <div class="pagination mt-4" style="width: 100%; justify-content: center;">
+        <span class="step-links">
+            {% if page.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page.previous_page_number }}">previous</a>
+            {% endif %}
+            
+            <span class="current">
+                Page {{ page.number }} of {{ page.paginator.num_pages }}.
+            </span>
+            
+            {% if page.has_next %}
+                <a href="?page={{ page.next_page_number }}">next</a>
+                <a href="?page={{ page.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 </div>
 
 <script>
