@@ -15,7 +15,7 @@ from .models import User, Post
 
 def index(request):
     post_list = Post.objects.all().order_by('-timestamp')
-    paginator = Paginator(post_list, 10)  # Show 10 posts per page.
+    paginator = Paginator(post_list, 5)  # Show 5 posts per page.
 
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)

@@ -18,15 +18,12 @@
         </form>
       {% endif %}
     </div>
-    
+
     <hr/>
 
     <h3 class="mt-4">Posts</h3>
     {% for post in posts %}
-        <div class="post container mt-4" style="border: 1px solid #ccc; padding: 1rem;">
-            <p><strong>{{ post.user.username }}</strong> posted on {{ post.timestamp|date:"N j, Y, P" }}</p>
-            <p style="text-align: justify;">{{ post.content }}</p>
-        </div>
+      {% include "network/post.html" %}
     {% endfor %}
 </div>
 {% endblock %}
