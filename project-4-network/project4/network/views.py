@@ -6,6 +6,8 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404
+
 import json
 
 from .models import User, Post
@@ -114,3 +116,32 @@ def edit_post(request, post_id):
         post.save()
         return JsonResponse({'success': True})
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+@login_required
+def profile(request, username):
+    profile_user = get_object_or_404(User, username=username)
+    posts = profile_user.posts.all().order_by('-timestamp')
+    followers_count = profile_user.followers.count()
+    following_count = profile_user.following.count()
+    is_following = request.user in profile_user.followers.all()
+
+    return render(request, "network/profile.html", {
+        "profile_user": profile_user,
+        "posts": posts,
+        "followers_count": followers_count,
+        "following_count": following_count,
+        "is_following": is_following,
+    })
+
+
+@login_required
+def toggle_follow(request, username):
+    profile_user = get_object_or_404(User, username=username)
+    if profile_user != request.user:
+        if request.user in profile_user.followers.all():
+            profile_user.followers.remove(request.user)
+        else:
+            profile_user.followers.add(request.user)
+
+    return HttpResponseRedirect(reverse('profile', args=[username]))

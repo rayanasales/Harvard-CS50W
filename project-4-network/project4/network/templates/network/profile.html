@@ -1,0 +1,32 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2>Profile Page</h2>
+
+    <div class="profile-info mt-4">
+      <p><strong>Username:</strong> {{ profile_user.username }}</p>
+      <p><strong>Followers:</strong> {{ followers_count }}</p>
+      <p><strong>Following:</strong> {{ following_count }}</p>
+
+      {% if user.is_authenticated and user != profile_user %}
+        <form action="{% url 'toggle_follow' profile_user.username %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-{% if is_following %}danger{% else %}primary{% endif %}">
+                {% if is_following %}Unfollow{% else %}Follow{% endif %}
+            </button>
+        </form>
+      {% endif %}
+    </div>
+    
+    <hr/>
+
+    <h3 class="mt-4">Posts</h3>
+    {% for post in posts %}
+        <div class="post container mt-4" style="border: 1px solid #ccc; padding: 1rem;">
+            <p><strong>{{ post.user.username }}</strong> posted on {{ post.timestamp|date:"N j, Y, P" }}</p>
+            <p style="text-align: justify;">{{ post.content }}</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
