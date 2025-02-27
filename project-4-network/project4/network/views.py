@@ -145,3 +145,15 @@ def toggle_follow(request, username):
             profile_user.followers.add(request.user)
 
     return HttpResponseRedirect(reverse('profile', args=[username]))
+
+
+@login_required
+def following_posts(request):
+    following_users = request.user.following.all()
+    posts = Post.objects.filter(user__in=following_users).order_by('-timestamp')
+
+    paginator = Paginator(posts, 10)  # Paginate posts, 10 per page.
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+
+    return render(request, "network/following.html", {'page': page})
