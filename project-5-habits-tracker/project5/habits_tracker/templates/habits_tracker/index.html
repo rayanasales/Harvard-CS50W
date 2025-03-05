@@ -1,5 +1,37 @@
 {% extends "habits_tracker/layout.html" %}
 
 {% block body %}
-    TODO
+<div>
+    {% if habits %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Habit</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for date in week_dates %}
+                    {% for habit in habits %}
+                    <tr>
+                        <td>{{ date }}</td>
+                        <td>{{ habit.name }}</td>
+                        <td>
+                            <form method="post" action="{% url 'toggle_completion' habit.id date %}">
+                                {% csrf_token %}
+                                <button type="submit">Toggle Completion</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div>
+            <span colspan="3">No habits created yet.</span>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
