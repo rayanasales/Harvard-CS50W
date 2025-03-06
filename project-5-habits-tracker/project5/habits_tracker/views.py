@@ -76,34 +76,3 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "habits_tracker/register.html")
-
-
-@csrf_exempt
-def create_habit(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        user = request.user
-
-        habit = Habit.objects.create(
-            user=user,
-            name=data.get("name"),
-            description=data.get("description"),
-            frequency=data.get("frequency"),
-            start_date=data.get("start_date"),
-            time_of_day=data.get("time_of_day"),
-        )
-        return JsonResponse({"message": "Habit created successfully!", "habit_id": habit.id}, status=201)
-
-    return JsonResponse({"error": "Invalid request"}, status=400)
-
-
-@login_required
-def toggle_completion(request, habit_id, date):
-    habit = get_object_or_404(Habit, id=habit_id, user=request.user)
-    date_obj = datetime.strptime(date, "%Y-%m-%d").date()
-
-    completion, created = HabitCompletion.objects.get_or_create(habit=habit, date=date_obj)
-    completion.completed = not completion.completed
-    completion.save()
-
-    return HttpResponseRedirect(reverse("index"))

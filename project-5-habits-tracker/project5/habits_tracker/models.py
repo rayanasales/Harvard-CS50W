@@ -1,49 +1,49 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 
 class User(AbstractUser):
     pass
 
 class Habit(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='habits')
+    DAILY = 'daily'
+    WEEKLY = 'weekly'
+    MONTHLY = 'monthly'
+
+    FREQUENCY_CHOICES = [
+        (DAILY, 'Daily'),
+        (WEEKLY, 'Weekly'),
+        (MONTHLY, 'Monthly'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="habits")
     name = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
-    frequency = models.CharField(max_length=50)  # e.g., daily, weekly, every X days
+    frequency = models.CharField(max_length=10, choices=FREQUENCY_CHOICES)
     start_date = models.DateField()
-    time_of_day = models.TimeField()  # Changed to TimeField to store specific hours
+    end_date = models.DateField(null=True, blank=True)
+    hour = models.TimeField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.frequency})"
 
-    def edit_habit(self, name=None, description=None, frequency=None, start_date=None, time_of_day=None):
-        if name:
-            self.name = name
-        if description:
-            self.description = description
-        if frequency:
-            self.frequency = frequency
-        if start_date:
-            self.start_date = start_date
-        if time_of_day:
-            self.time_of_day = time_of_day
-        self.save()
+class HabitList(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="habit_list")
+    habits = models.ManyToManyField(Habit, related_name="habit_lists")
 
-    def delete_habit(self):
-        self.delete()
+    def __str__(self):
+        return f"Habit List for {self.user.username}"
 
 class HabitCompletion(models.Model):
-    habit = models.ForeignKey(Habit, on_delete=models.CASCADE, related_name='completions')
-    date = models.DateField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="habit_completions")
+    habit = models.ForeignKey(Habit, on_delete=models.CASCADE, related_name="completions")
+    date = models.DateField(default=timezone.now)
     completed = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f"{self.habit.name} completion on {self.date}: {'Completed' if self.completed else 'Not Completed'}"
+    class Meta:
+        unique_together = ('habit', 'date')
 
-    @classmethod
-    def toggle_completion(cls, habit, date=None):
-        date = date or timezone.now().date()
-        completion, created = cls.objects.get_or_create(habit=habit, date=date)
-        completion.completed = not completion.completed
-        completion.save()
-        return completion
+    def __str__(self):
+        return f"{self.habit.name} - {self.date} - {'Completed' if self.completed else 'Incomplete'}"
