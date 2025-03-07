@@ -1,29 +1,14 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.urls import reverse
-from datetime import datetime, timedelta
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
-import json
 
-from .models import User, Habit, HabitCompletion
+from .models import User
 
 
 def index(request):
-    today = datetime.now().date()
-    start_of_week = today - timedelta(days=today.weekday())  # Monday
-    end_of_week = start_of_week + timedelta(days=6)  # Sunday
-    week_dates = [start_of_week + timedelta(days=i) for i in range(7)]
-    habits = Habit.objects.filter(start_date__lte=end_of_week)
-
-    context = {
-        'habits': habits,
-        'week_dates': week_dates,
-    }
-    return render(request, "habits_tracker/index.html", context)
+    return render(request, "habits_tracker/index.html")
 
 
 def login_view(request):

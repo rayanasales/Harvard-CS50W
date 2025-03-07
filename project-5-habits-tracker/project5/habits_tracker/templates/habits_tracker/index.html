@@ -2,40 +2,12 @@
 
 {% block body %}
 <div>
-    {% if habits %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Habit</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for date in week_dates %}
-                    {% for habit in habits %}
-                    <tr>
-                        <td>{{ date }}</td>
-                        <td>{{ habit.name }}</td>
-                        <td>
-                            <form method="post" action="{% url 'toggle_completion' habit.id date|date:'Y-m-d' %}">
-                                {% csrf_token %}
-                                <button type="submit">Toggle Completion</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <div style="text-align: center; width: 400px; margin: 0 auto; padding: 10px; margin-top: 200px;">
-            <h6>No habits created yet</h6>
-            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#habitModal">
-                Create habit
-            </button>
-        </div>
-    {% endif %}
+    <div style="text-align: center; width: 400px; margin: 0 auto; padding: 10px; margin-top: 200px;">
+        <h6>No habits created yet</h6>
+        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#habitModal">
+            Create habit
+        </button>
+    </div>
 </div>
 
 <div class="modal fade" id="habitModal" tabindex="-1" aria-labelledby="habitModalLabel" aria-hidden="true">
