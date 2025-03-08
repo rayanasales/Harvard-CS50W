@@ -14,6 +14,7 @@
                 <th>Size</th>
                 <th>Priority</th>
                 <th>Status</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -26,10 +27,13 @@
                     <td>{{ task.get_size_display }}</td>
                     <td>{{ task.get_priority_display }}</td>
                     <td>{{ task.get_status_display }}</td>
+                    <td>
+                        <a href="{% url 'edit_task' task.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    </td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="7" class="text-center">No tasks found.</td>
+                    <td colspan="8" class="text-center">No tasks found.</td>
                 </tr>
             {% endfor %}
         </tbody>

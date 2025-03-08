@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -85,3 +85,16 @@ def create_task(request):
     else:
         form = TaskForm()
     return render(request, "tasker/create_task.html", {"form": form})
+
+
+@login_required
+def edit_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id, user=request.user)
+    if request.method == "POST":
+        form = TaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect("task_list")
+    else:
+        form = TaskForm(instance=task)
+    return render(request, "tasker/edit_task.html", {"form": form, "task": task})
