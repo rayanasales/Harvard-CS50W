@@ -1,0 +1,38 @@
+{% extends "tasker/layout.html" %}
+
+{% block body %}
+<div class="container">
+    <h2>Your Tasks</h2>
+    <a href="{% url 'create_task' %}" class="btn btn-primary mb-3">Create Task</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Date Created</th>
+                <th>Due Date</th>
+                <th>Size</th>
+                <th>Priority</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+                <tr>
+                    <td>{{ task.name }}</td>
+                    <td>{{ task.description }}</td>
+                    <td>{{ task.date_created }}</td>
+                    <td>{{ task.date_to_complete }}</td>
+                    <td>{{ task.get_size_display }}</td>
+                    <td>{{ task.get_priority_display }}</td>
+                    <td>{{ task.get_status_display }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">No tasks found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

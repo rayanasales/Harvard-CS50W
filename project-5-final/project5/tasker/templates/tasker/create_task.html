@@ -1,0 +1,12 @@
+{% extends "tasker/layout.html" %}
+
+{% block body %}
+<div class="container">
+    <h2>Create a Task</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Save Task</button>
+    </form>
+</div>
+{% endblock %}
