@@ -12,26 +12,25 @@
     </div>
 
     <div class="kanban-board">
-        <div class="kanban-column">
+        <!-- In Analysis Column -->
+        <div class="kanban-column" id="in-analysis" ondrop="drop(event)" ondragover="allowDrop(event)">
             <h3>In Analysis</h3>
             <div class="kanban-cards">
                 {% for task in task_status.in_analysis %}
-                    <div class="kanban-card in-analysis">
+                    <div class="kanban-card in-analysis" draggable="true" ondragstart="drag(event)" id="task-{{ task.id }}">
                         <h5>{{ task.name }}</h5>
                         <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
-                        <div class="icon-container">
-                            <div>
-                                <div class="due-date">
-                                    <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}.
-                                </div>
-                            </div>
-                            <div>
+                        <div class="card-footer">
+                            <div class="icon-container">
                                 <a href="{% url 'edit_task' task.id %}" title="Edit Task">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
                                 <a href="{% url 'edit_task' task.id %}" title="View Task">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
+                            </div>
+                            <div class="due-date">
+                                <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}
                             </div>
                         </div>
                     </div>
@@ -41,26 +40,25 @@
             </div>
         </div>
 
-        <div class="kanban-column">
+        <!-- In Progress Column -->
+        <div class="kanban-column" id="in-progress" ondrop="drop(event)" ondragover="allowDrop(event)">
             <h3>In Progress</h3>
             <div class="kanban-cards">
                 {% for task in task_status.in_progress %}
-                    <div class="kanban-card in-progress">
+                    <div class="kanban-card in-progress" draggable="true" ondragstart="drag(event)" id="task-{{ task.id }}">
                         <h5>{{ task.name }}</h5>
                         <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
-                        <div class="icon-container">
-                            <div>
-                                <div class="due-date">
-                                    <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}.
-                                </div>
-                            </div>
-                            <div>
+                        <div class="card-footer">
+                            <div class="icon-container">
                                 <a href="{% url 'edit_task' task.id %}" title="Edit Task">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
                                 <a href="{% url 'edit_task' task.id %}" title="View Task">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
+                            </div>
+                            <div class="due-date">
+                                <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}
                             </div>
                         </div>
                     </div>
@@ -70,26 +68,25 @@
             </div>
         </div>
 
-        <div class="kanban-column">
+        <!-- Flagged Column -->
+        <div class="kanban-column" id="flagged" ondrop="drop(event)" ondragover="allowDrop(event)">
             <h3>Flagged</h3>
             <div class="kanban-cards">
                 {% for task in task_status.flagged %}
-                    <div class="kanban-card flagged">
+                    <div class="kanban-card flagged" draggable="true" ondragstart="drag(event)" id="task-{{ task.id }}">
                         <h5>{{ task.name }}</h5>
                         <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
-                        <div class="icon-container">
-                            <div>
-                                <div class="due-date">
-                                    <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}.
-                                </div>
-                            </div>
-                            <div>
+                        <div class="card-footer">
+                            <div class="icon-container">
                                 <a href="{% url 'edit_task' task.id %}" title="Edit Task">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
                                 <a href="{% url 'edit_task' task.id %}" title="View Task">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
+                            </div>
+                            <div class="due-date">
+                                <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}
                             </div>
                         </div>
                     </div>
@@ -99,26 +96,25 @@
             </div>
         </div>
 
-        <div class="kanban-column">
+        <!-- Completed Column -->
+        <div class="kanban-column" id="completed" ondrop="drop(event)" ondragover="allowDrop(event)">
             <h3>Completed</h3>
             <div class="kanban-cards">
                 {% for task in task_status.completed %}
-                    <div class="kanban-card completed">
+                    <div class="kanban-card completed" draggable="true" ondragstart="drag(event)" id="task-{{ task.id }}">
                         <h5>{{ task.name }}</h5>
                         <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
-                        <div class="icon-container">
-                            <div>
-                                <div class="due-date">
-                                    <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}.
-                                </div>
-                            </div>
-                            <div>
+                        <div class="card-footer">
+                            <div class="icon-container">
                                 <a href="{% url 'edit_task' task.id %}" title="Edit Task">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
                                 <a href="{% url 'edit_task' task.id %}" title="View Task">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
+                            </div>
+                            <div class="due-date">
+                                <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}
                             </div>
                         </div>
                     </div>
@@ -129,6 +125,94 @@
         </div>
     </div>
 </div>
+
+<script>
+    function allowDrop(event) {
+        event.preventDefault();
+    }
+    
+    function drag(event) {
+        event.dataTransfer.setData("taskId", event.target.id);
+    }
+    
+    function drop(event) {
+        event.preventDefault();
+        
+        let taskId = event.dataTransfer.getData("taskId");
+        let taskElement = document.getElementById(taskId);
+        
+        // Find the closest kanban-column, then find the kanban-cards inside it
+        let column = event.target.closest(".kanban-column");
+        
+        if (!column) {
+            console.error("Drop target is not a valid column.");
+            return;
+        }
+    
+        let targetContainer = column.querySelector(".kanban-cards");
+    
+        if (!targetContainer) {
+            console.error("Could not find a valid kanban-cards container.");
+            return;
+        }
+    
+        // Move the task to the new column
+        targetContainer.appendChild(taskElement);
+    
+        // Update the card background color
+        let newStatus = column.id;
+        updateCardColor(taskElement, newStatus);
+    
+        console.log(`Task ${taskId} moved to ${newStatus}`);
+    
+        // Update the "No tasks" label visibility
+        updateNoTaskLabels();
+    
+        // Send AJAX request to update task status
+        fetch(`/tasks/update_status/${taskId.replace('task-', '')}/${newStatus}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            }
+        }).then(response => {
+            if (!response.ok) {
+                console.error("Failed to update status.");
+            }
+        }).catch(error => console.error("Error:", error));
+    }
+    
+    // Function to update card color based on status
+    function updateCardColor(taskElement, newStatus) {
+        taskElement.classList.remove("in-analysis", "in-progress", "flagged", "completed");
+        taskElement.classList.add(newStatus);
+    }
+    
+    // Function to update the "No tasks" label visibility
+    function updateNoTaskLabels() {
+        document.querySelectorAll(".kanban-column").forEach(column => {
+            let tasks = column.querySelectorAll(".kanban-card");
+            let noTaskLabel = column.querySelector(".no-task");
+    
+            // If there are no tasks in the column, show the label, otherwise hide it
+            if (tasks.length === 0) {
+                if (!noTaskLabel) {
+                    let noTaskMessage = document.createElement("p");
+                    noTaskMessage.className = "no-task";
+                    noTaskMessage.textContent = "No tasks";
+                    column.querySelector(".kanban-cards").appendChild(noTaskMessage);
+                } else {
+                    noTaskLabel.style.display = "block";
+                }
+            } else {
+                if (noTaskLabel) noTaskLabel.style.display = "none";
+            }
+        });
+    }
+    
+    // Run initial check for "No tasks" labels on page load
+    document.addEventListener("DOMContentLoaded", updateNoTaskLabels);
+    </script>    
 
 <style type="text/css">
 /* General Styles */

@@ -1,9 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
 from .models import Task
 from .forms import TaskForm
@@ -106,3 +108,12 @@ def edit_task(request, task_id):
     else:
         form = TaskForm(instance=task)
     return render(request, "tasker/edit_task.html", {"form": form, "task": task})
+
+
+@csrf_exempt
+@login_required
+def update_task_status(request, task_id, new_status):
+    task = get_object_or_404(Task, id=task_id, user=request.user)
+    task.status = new_status
+    task.save()
+    return JsonResponse({"message": "Task status updated successfully."})
