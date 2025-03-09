@@ -2,41 +2,156 @@
 
 {% block body %}
 <div class="container">
-    <h2>Your Tasks</h2>
+    <h2>Task Board</h2>
     <a href="{% url 'create_task' %}" class="btn btn-primary mb-3">Create Task</a>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Date Created</th>
-                <th>Due Date</th>
-                <th>Size</th>
-                <th>Priority</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for task in tasks %}
-                <tr>
-                    <td>{{ task.name }}</td>
-                    <td>{{ task.description }}</td>
-                    <td>{{ task.date_created }}</td>
-                    <td>{{ task.date_to_complete }}</td>
-                    <td>{{ task.get_size_display }}</td>
-                    <td>{{ task.get_priority_display }}</td>
-                    <td>{{ task.get_status_display }}</td>
-                    <td>
+
+    <div class="kanban-board">
+        <div class="kanban-column">
+            <h3>In Analysis</h3>
+            <div class="kanban-cards">
+                {% for task in task_status.in_analysis %}
+                    <div class="kanban-card in-analysis">
+                        <h5>{{ task.name }}</h5>
+                        <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
+                        <small>Due: {{ task.date_to_complete }}</small>
                         <a href="{% url 'edit_task' task.id %}" class="btn btn-warning btn-sm">Edit</a>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="8" class="text-center">No tasks found.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    </div>
+                {% empty %}
+                    <p class="no-task">No tasks</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="kanban-column">
+            <h3>In Progress</h3>
+            <div class="kanban-cards">
+                {% for task in task_status.in_progress %}
+                    <div class="kanban-card in-progress">
+                        <h5>{{ task.name }}</h5>
+                        <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
+                        <small>Due: {{ task.date_to_complete }}</small>
+                        <a href="{% url 'edit_task' task.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    </div>
+                {% empty %}
+                    <p class="no-task">No tasks</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="kanban-column">
+            <h3>Flagged</h3>
+            <div class="kanban-cards">
+                {% for task in task_status.flagged %}
+                    <div class="kanban-card flagged">
+                        <h5>{{ task.name }}</h5>
+                        <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
+                        <small>Due: {{ task.date_to_complete }}</small>
+                        <a href="{% url 'edit_task' task.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    </div>
+                {% empty %}
+                    <p class="no-task">No tasks</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="kanban-column">
+            <h3>Completed</h3>
+            <div class="kanban-cards">
+                {% for task in task_status.completed %}
+                    <div class="kanban-card completed">
+                        <h5>{{ task.name }}</h5>
+                        <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
+                        <small>Due: {{ task.date_to_complete }}</small>
+                        <a href="{% url 'edit_task' task.id %}" class="btn btn-secondary btn-sm">View</a>
+                    </div>
+                {% empty %}
+                    <p class="no-task">No tasks</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
+
+<style type="text/css">
+.kanban-board {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+.kanban-column {
+    width: 25%;
+    background: #f4f4f4;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.kanban-column h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.kanban-cards {
+    min-height: 100px;
+}
+
+.kanban-card {
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: #333 1px 1px 5px;
+}
+
+.kanban-card p {
+    font-size: 14px;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.kanban-card h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.kanban-card small {
+    display: block;
+    margin-bottom: 5px;
+    color: #777;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Completed - Green */
+.kanban-card.completed {
+    background: #d4edda;
+    border-left: 4px solid #28a745;
+}
+
+/* Flagged - Red */
+.kanban-card.flagged {
+    background: #f8d7da;
+    border-left: 4px solid #dc3545;
+}
+
+/* In Analysis - Purple */
+.kanban-card.in-analysis {
+    background: #e6e0f8;
+    border-left: 4px solid #6f42c1;
+}
+
+/* In Progress - Baby Pink */
+.kanban-card.in-progress {
+    background: #ffffff;
+    border-left: 4px solid #656565;
+}
+</style>
 {% endblock %}

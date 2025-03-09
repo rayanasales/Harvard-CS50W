@@ -69,8 +69,16 @@ def register(request):
 
 @login_required
 def task_list(request):
-    tasks = Task.objects.filter(user=request.user).order_by('-date_created')
-    return render(request, "tasker/task_list.html", {"tasks": tasks})
+    tasks = Task.objects.filter(user=request.user)
+
+    task_status = {
+        "in_analysis": tasks.filter(status="in-analysis"),
+        "in_progress": tasks.filter(status="in-progress"),
+        "flagged": tasks.filter(status="flagged"),
+        "completed": tasks.filter(status="completed"),
+    }
+
+    return render(request, "tasker/task_list.html", {"task_status": task_status})
 
 
 @login_required
