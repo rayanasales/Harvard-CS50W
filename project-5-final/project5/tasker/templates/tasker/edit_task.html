@@ -1,7 +1,7 @@
 {% extends "tasker/layout.html" %}
 
 {% block body %}
-<div class="container">
+<div class="container-task-form edit-task">
     <div class="task-form">
         <h2>Edit Task: {{ task.name }}</h2>
         <form method="post">
@@ -36,78 +36,4 @@
     </div>
 </div>
 
-<style>
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin-top: 95px;
-    margin-bottom: 100px;
-}
-
-.task-form {
-    width: 400px;
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
-}
-
-.form-group input, .form-group select, .form-group textarea {
-    width: 100%;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.btn {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    text-align: center;
-}
-
-.btn-success {
-    background: #28a745;
-    color: white;
-}
-
-.btn-success:hover {
-    background: #218838;
-}
-
-.btn-secondary {
-    background: #6c757d;
-    color: white;
-    display: block;
-    text-align: center;
-    margin-top: 10px;
-}
-
-.btn-secondary:hover {
-    background: #5a6268;
-}
-</style>
 {% endblock %}
