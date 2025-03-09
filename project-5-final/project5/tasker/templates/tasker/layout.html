@@ -15,21 +15,18 @@
             <div>
               <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
-                    </li> -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'task_list' %}">{{ user.username }} Tasks</a>
+                        <a class="nav-link" href="{% url 'task_list' %}">{{ user.username }} tasks</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                        <a class="nav-link" href="{% url 'logout' %}">log out</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                        <a class="nav-link" href="{% url 'login' %}">log in</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        <a class="nav-link" href="{% url 'register' %}">register</a>
                     </li>
                 {% endif %}
               </ul>
