@@ -12,7 +12,7 @@ from .models import User
 
 
 def index(request):
-    return render(request, "tasker/index.html")
+    return task_list(request)
 
 
 def login_view(request):

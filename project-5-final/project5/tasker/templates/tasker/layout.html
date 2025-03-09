@@ -15,11 +15,11 @@
             <div>
               <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'task_list' %}">My Tasks</a>
+                        <a class="nav-link" href="{% url 'task_list' %}">{{ user.username }} Tasks</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">Log Out</a>

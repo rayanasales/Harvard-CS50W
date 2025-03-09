@@ -6,9 +6,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 
-<div class="container">
-    <h2>Task Board</h2>
-    <a href="{% url 'create_task' %}" class="btn btn-primary mb-3">Create Task</a>
+<div class="container" style="max-width: 100%;">
+    <div class="add-task">
+        <a href="{% url 'create_task' %}" style="color: white; text-decoration: none;">+ Add a Task</a>
+    </div>
 
     <div class="kanban-board">
         <div class="kanban-column">
@@ -18,14 +19,20 @@
                     <div class="kanban-card in-analysis">
                         <h5>{{ task.name }}</h5>
                         <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
-                        <small>Due: {{ task.date_to_complete }}</small>
                         <div class="icon-container">
-                            <a href="{% url 'edit_task' task.id %}" title="Edit Task">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="{% url 'edit_task' task.id %}" title="View Task">
-                                <i class="fas fa-eye"></i>
-                            </a>
+                            <div>
+                                <div class="due-date">
+                                    <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}.
+                                </div>
+                            </div>
+                            <div>
+                                <a href="{% url 'edit_task' task.id %}" title="Edit Task">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a href="{% url 'edit_task' task.id %}" title="View Task">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 {% empty %}
@@ -41,14 +48,20 @@
                     <div class="kanban-card in-progress">
                         <h5>{{ task.name }}</h5>
                         <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
-                        <small>Due: {{ task.date_to_complete }}</small>
                         <div class="icon-container">
-                            <a href="{% url 'edit_task' task.id %}" title="Edit Task">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="{% url 'edit_task' task.id %}" title="View Task">
-                                <i class="fas fa-eye"></i>
-                            </a>
+                            <div>
+                                <div class="due-date">
+                                    <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}.
+                                </div>
+                            </div>
+                            <div>
+                                <a href="{% url 'edit_task' task.id %}" title="Edit Task">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a href="{% url 'edit_task' task.id %}" title="View Task">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 {% empty %}
@@ -64,14 +77,20 @@
                     <div class="kanban-card flagged">
                         <h5>{{ task.name }}</h5>
                         <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
-                        <small>Due: {{ task.date_to_complete }}</small>
                         <div class="icon-container">
-                            <a href="{% url 'edit_task' task.id %}" title="Edit Task">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="{% url 'edit_task' task.id %}" title="View Task">
-                                <i class="fas fa-eye"></i>
-                            </a>
+                            <div>
+                                <div class="due-date">
+                                    <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}.
+                                </div>
+                            </div>
+                            <div>
+                                <a href="{% url 'edit_task' task.id %}" title="Edit Task">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a href="{% url 'edit_task' task.id %}" title="View Task">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 {% empty %}
@@ -87,14 +106,20 @@
                     <div class="kanban-card completed">
                         <h5>{{ task.name }}</h5>
                         <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
-                        <small>Due: {{ task.date_to_complete }}</small>
                         <div class="icon-container">
-                            <a href="{% url 'edit_task' task.id %}" title="Edit Task">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="{% url 'edit_task' task.id %}" title="View Task">
-                                <i class="fas fa-eye"></i>
-                            </a>
+                            <div>
+                                <div class="due-date">
+                                    <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}.
+                                </div>
+                            </div>
+                            <div>
+                                <a href="{% url 'edit_task' task.id %}" title="Edit Task">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a href="{% url 'edit_task' task.id %}" title="View Task">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 {% empty %}
@@ -106,102 +131,155 @@
 </div>
 
 <style type="text/css">
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to right, #f0f4ff, #ffffff);
+}
+
+/* Kanban Board Layout */
 .kanban-board {
     display: flex;
     gap: 20px;
     justify-content: center;
     padding: 20px;
+    align-items: flex-start;
 }
 
+/* Columns */
 .kanban-column {
     width: 25%;
-    background: #f4f4f4;
+    background: white;
     padding: 15px;
-    border-radius: 8px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.1);
     text-align: center;
+    transition: transform 0.2s ease-in-out;
 }
 
 .kanban-column h3 {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
     color: #333;
 }
 
+/* Kanban Cards */
 .kanban-cards {
-    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
+/* Card Style */
 .kanban-card {
-    padding: 10px;
+    background: white;
+    padding: 12px;
     border-radius: 10px;
-    box-shadow: #333 1px 1px 5px;
+    box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease-in-out;
+    border-left: 6px solid transparent;
 }
 
-.kanban-card p {
-    font-size: 14px;
-    color: #555;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
+/* Task Name */
 .kanban-card h5 {
     margin: 0;
     font-size: 16px;
     font-weight: bold;
-    margin-bottom: 10px;
+    color: #333;
+    margin-bottom: 8px;
 }
 
-.kanban-card small {
-    display: block;
-    margin-bottom: 5px;
-    color: #777;
+/* Task Description (Truncated) */
+.kanban-card p {
+    font-size: 14px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Footer */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 10px;
-    margin-bottom: 10px;
 }
 
+/* Due Date Styling */
+.due-date {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    color: #666;
+}
+
+.due-date i {
+    font-size: 16px;
+    color: #666;
+}
+
+/* Task Status Colors */
+.kanban-card.completed {
+    border-left-color: #28a745;
+    /* background: #d4edda; */
+}
+
+.kanban-card.flagged {
+    border-left-color: #dc3545;
+    /* background: #f8d7da; */
+}
+
+.kanban-card.in-analysis {
+    border-left-color: #007bff;;
+    /* background: #e6e0f8; */
+}
+
+.kanban-card.in-progress {
+    border-left-color: #4b4b4b;
+    /* background: #ffffff; */
+}
+
+/* Icon Container */
 .icon-container {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
+    gap: 12px;
 }
 
 .icon-container a {
     text-decoration: none;
-    color: #555;
     font-size: 18px;
-    padding: 5px;
+    color: #666;
+    transition: color 0.3s;
 }
 
 .icon-container a:hover {
     color: #000;
 }
 
-/* Completed - Green */
-.kanban-card.completed {
-    background: #d4edda;
-    border-left: 4px solid #28a745;
+/* Add Task Button */
+.add-task {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #919191;
+    color: white;
+    padding: 8px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    width: 120px;
+    margin-left: 20px;
+    margin-top: 20px;
 }
 
-/* Flagged - Red */
-.kanban-card.flagged {
-    background: #f8d7da;
-    border-left: 4px solid #dc3545;
-}
-
-/* In Analysis - Purple */
-.kanban-card.in-analysis {
-    background: #e6e0f8;
-    border-left: 4px solid #6f42c1;
-}
-
-/* In Progress - Baby Pink */
-.kanban-card.in-progress {
-    background: #ffffff;
-    border-left: 4px solid #656565;
+.add-task:hover {
+    background: #606060;
 }
 </style>
 
