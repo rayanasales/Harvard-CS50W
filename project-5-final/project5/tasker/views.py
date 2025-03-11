@@ -124,3 +124,18 @@ def delete_task(request, task_id):
     task = get_object_or_404(Task, id=task_id, user=request.user)
     task.delete()
     return JsonResponse({"message": "Task deleted successfully."})
+
+
+@login_required
+def duplicate_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id, user=request.user)
+    duplicated_task = Task.objects.create(
+        user=request.user,
+        name=f"{task.name} (Copy)",
+        description=task.description,
+        date_to_complete=task.date_to_complete,
+        size=task.size,
+        priority=task.priority,
+        status=task.status,
+    )
+    return JsonResponse({"message": "Task duplicated successfully."})
