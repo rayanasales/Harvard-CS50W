@@ -117,3 +117,10 @@ def update_task_status(request, task_id, new_status):
     task.status = new_status
     task.save()
     return JsonResponse({"message": "Task status updated successfully."})
+
+
+@login_required
+def delete_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id, user=request.user)
+    task.delete()
+    return JsonResponse({"message": "Task deleted successfully."})
