@@ -17,29 +17,7 @@
             <h3>In Analysis</h3>
             <div class="kanban-cards">
                 {% for task in task_status.in_analysis %}
-                    <div class="kanban-card in-analysis" draggable="true" ondragstart="drag(event)" id="task-{{ task.id }}">
-                        <h5>{{ task.name }}</h5>
-                        <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
-                        <div class="card-footer">
-                            <div class="icon-container">
-                                <a href="{% url 'edit_task' task.id %}" title="Edit Task">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </a>
-                                <a href="{% url 'edit_task' task.id %}" title="View Task">
-                                    <i class="fa-solid fa-eye"></i>
-                                </a>
-                                <a href="#" title="Duplicate Task" onclick="duplicateTask('{{ task.id }}')">
-                                    <i class="fa-solid fa-copy"></i>
-                                </a>
-                                <a href="#" title="Delete Task" onclick="deleteTask('{{ task.id }}')">
-                                    <i class="fa-solid fa-trash"></i>
-                                </a>
-                            </div>
-                            <div class="due-date">
-                                <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}
-                            </div>
-                        </div>
-                    </div>
+                    {% include "tasker/task_card.html" %}
                 {% empty %}
                     <p class="no-task">No tasks</p>
                 {% endfor %}
@@ -51,29 +29,7 @@
             <h3>In Progress</h3>
             <div class="kanban-cards">
                 {% for task in task_status.in_progress %}
-                    <div class="kanban-card in-progress" draggable="true" ondragstart="drag(event)" id="task-{{ task.id }}">
-                        <h5>{{ task.name }}</h5>
-                        <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
-                        <div class="card-footer">
-                            <div class="icon-container">
-                                <a href="{% url 'edit_task' task.id %}" title="Edit Task">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </a>
-                                <a href="{% url 'edit_task' task.id %}" title="View Task">
-                                    <i class="fa-solid fa-eye"></i>
-                                </a>
-                                <a href="#" title="Duplicate Task" onclick="duplicateTask('{{ task.id }}')">
-                                    <i class="fa-solid fa-copy"></i>
-                                </a>
-                                <a href="#" title="Delete Task" onclick="deleteTask('{{ task.id }}')">
-                                    <i class="fa-solid fa-trash"></i>
-                                </a>
-                            </div>
-                            <div class="due-date">
-                                <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}
-                            </div>
-                        </div>
-                    </div>
+                    {% include "tasker/task_card.html" %}
                 {% empty %}
                     <p class="no-task">No tasks</p>
                 {% endfor %}
@@ -85,29 +41,7 @@
             <h3>Flagged</h3>
             <div class="kanban-cards">
                 {% for task in task_status.flagged %}
-                    <div class="kanban-card flagged" draggable="true" ondragstart="drag(event)" id="task-{{ task.id }}">
-                        <h5>{{ task.name }}</h5>
-                        <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
-                        <div class="card-footer">
-                            <div class="icon-container">
-                                <a href="{% url 'edit_task' task.id %}" title="Edit Task">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </a>
-                                <a href="{% url 'edit_task' task.id %}" title="View Task">
-                                    <i class="fa-solid fa-eye"></i>
-                                </a>
-                                <a href="#" title="Duplicate Task" onclick="duplicateTask('{{ task.id }}')">
-                                    <i class="fa-solid fa-copy"></i>
-                                </a>
-                                <a href="#" title="Delete Task" onclick="deleteTask('{{ task.id }}')">
-                                    <i class="fa-solid fa-trash"></i>
-                                </a>
-                            </div>
-                            <div class="due-date">
-                                <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}
-                            </div>
-                        </div>
-                    </div>
+                    {% include "tasker/task_card.html" %}
                 {% empty %}
                     <p class="no-task">No tasks</p>
                 {% endfor %}
@@ -119,29 +53,7 @@
             <h3>Completed</h3>
             <div class="kanban-cards">
                 {% for task in task_status.completed %}
-                    <div class="kanban-card completed" draggable="true" ondragstart="drag(event)" id="task-{{ task.id }}">
-                        <h5>{{ task.name }}</h5>
-                        <p title="{{ task.description }}">{{ task.description|truncatechars:50 }}</p>
-                        <div class="card-footer">
-                            <div class="icon-container">
-                                <a href="{% url 'edit_task' task.id %}" title="Edit Task">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </a>
-                                <a href="{% url 'edit_task' task.id %}" title="View Task">
-                                    <i class="fa-solid fa-eye"></i>
-                                </a>
-                                <a href="#" title="Duplicate Task" onclick="duplicateTask('{{ task.id }}')">
-                                    <i class="fa-solid fa-copy"></i>
-                                </a>
-                                <a href="#" title="Delete Task" onclick="deleteTask('{{ task.id }}')">
-                                    <i class="fa-solid fa-trash"></i>
-                                </a>
-                            </div>
-                            <div class="due-date">
-                                <i class="fa-regular fa-clock"></i> {{ task.date_to_complete|date:"d M" }}
-                            </div>
-                        </div>
-                    </div>
+                    {% include "tasker/task_card.html" %}
                 {% empty %}
                     <p class="no-task">No tasks</p>
                 {% endfor %}
