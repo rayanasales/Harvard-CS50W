@@ -91,22 +91,22 @@ body {
 
 /* Task Status Colors */
 .kanban-card.completed {
-  border-left-color: #28a745;
+  border-left-color: #848484; /* in case you wanna change colors according status, I thought that was confused due the colored tags. */
   /* background: #d4edda; */
 }
 
 .kanban-card.flagged {
-  border-left-color: #dc3545;
+  border-left-color: #848484;
   /* background: #f8d7da; */
 }
 
 .kanban-card.in-analysis {
-  border-left-color: #007bff;;
+  border-left-color: #848484;;
   /* background: #e6e0f8; */
 }
 
 .kanban-card.in-progress {
-  border-left-color: #4b4b4b;
+  border-left-color: #848484;
   /* background: #ffffff; */
 }
 
