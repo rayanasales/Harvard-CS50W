@@ -19,6 +19,9 @@
                         <a class="nav-link" href="{% url 'task_list' %}">{{ user.username }} tasks</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tag_list' %}">tags</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">log out</a>
                     </li>
                 {% else %}

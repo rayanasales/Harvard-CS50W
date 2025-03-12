@@ -39,7 +39,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return redirect("login")
 
 
 def register(request):
@@ -101,6 +101,10 @@ def create_task(request):
 @login_required
 def edit_task(request, task_id):
     task = get_object_or_404(Task, id=task_id, user=request.user)
+    
+    # Ensure task tags exist, otherwise remove them
+    task.tags.set(task.tags.filter(id__in=Tag.objects.values_list('id', flat=True)))
+
     if request.method == "POST":
         form = TaskForm(request.POST, instance=task)
         if form.is_valid():
@@ -108,6 +112,7 @@ def edit_task(request, task_id):
             return redirect("task_list")
     else:
         form = TaskForm(instance=task)
+
     return render(request, "tasker/edit_task.html", {"form": form, "task": task})
 
 
@@ -154,3 +159,30 @@ def add_tag(request):
 
         tag, created = Tag.objects.get_or_create(name=tag_name, defaults={"color": tag_color})
         return JsonResponse({"success": True, "tag_id": tag.id})
+
+
+@login_required
+def tag_list(request):
+    tags = Tag.objects.all()
+    return render(request, "tasker/tag_list.html", {"tags": tags})
+
+
+@login_required
+def create_tag(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        name = data.get("name")
+        color = data.get("color", "#000000")
+
+        if not name:
+            return JsonResponse({"error": "Tag name is required"}, status=400)
+
+        tag, created = Tag.objects.get_or_create(name=name, defaults={"color": color})
+        return JsonResponse({"success": True, "tag_id": tag.id, "created": created})
+
+
+@login_required
+def delete_tag(request, tag_id):
+    tag = get_object_or_404(Tag, id=tag_id)
+    tag.delete()
+    return JsonResponse({"message": "Tag deleted successfully."})

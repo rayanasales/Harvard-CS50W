@@ -1,0 +1,14 @@
+<div class="task-tag" data-color="{{ tag.color }}" style="display: inline-block; width: auto; padding: 3px 8px; border-radius: 6px; margin-right: 5px; font-weight: bold; color: white; white-space: nowrap;">
+  <span>{{ tag.name }}</span>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      document.querySelectorAll(".task-tag").forEach(function(tag) {
+          let color = tag.getAttribute("data-color");
+          if (color) {
+              tag.style.backgroundColor = color;
+          }
+      });
+  });
+</script>
