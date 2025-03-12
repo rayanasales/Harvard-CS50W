@@ -1,8 +1,18 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+
 
 class User(AbstractUser):
     pass
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    color = models.CharField(max_length=7, default="#000000")  # Hex Color
+
+    def __str__(self):
+        return self.name
+
 
 class Task(models.Model):
     SIZE_CHOICES = [
@@ -34,6 +44,7 @@ class Task(models.Model):
     size = models.CharField(max_length=10, choices=SIZE_CHOICES)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES)
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='in-analysis')
+    tags = models.ManyToManyField(Tag, blank=True)
 
     def __str__(self):
         return f"{self.name} - {self.user.username}"

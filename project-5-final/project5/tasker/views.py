@@ -7,9 +7,9 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
-from .models import Task
+from .models import Task, Tag
 from .forms import TaskForm
-
+import json
 from .models import User
 
 
@@ -91,6 +91,7 @@ def create_task(request):
             task = form.save(commit=False)
             task.user = request.user
             task.save()
+            form.save_m2m()  # Save ManyToMany relationships
             return redirect("task_list")
     else:
         form = TaskForm()
@@ -139,3 +140,17 @@ def duplicate_task(request, task_id):
         status=task.status,
     )
     return JsonResponse({"message": "Task duplicated successfully."})
+
+
+@login_required
+def add_tag(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        tag_name = data.get("name")
+        tag_color = data.get("color", "#000000")
+
+        if not tag_name:
+            return JsonResponse({"error": "Tag name is required"}, status=400)
+
+        tag, created = Tag.objects.get_or_create(name=tag_name, defaults={"color": tag_color})
+        return JsonResponse({"success": True, "tag_id": tag.id})

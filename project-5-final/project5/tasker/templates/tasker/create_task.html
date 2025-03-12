@@ -30,9 +30,69 @@
                 {{ form.status.label_tag }}
                 {{ form.status }}
             </div>
+            <div class="form-group">
+                <label for="id_tags">Tags:</label>
+                <div class="tag-container">
+                    {% for tag in form.tags.field.queryset %}
+                        <label class="tag-label" data-color="{{ tag.color }}" style="display: flex; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 6px; margin-right: 5px; color: white;">
+                            <input type="checkbox" name="tags" value="{{ tag.id }}" {% if tag in form.instance.tags.all %}checked{% endif %} style="margin: 0; width: unset;">
+                            <span>{{ tag.name }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+                <!-- <div class="tag-creation">
+                    <input type="text" id="new-tag-name" class="tag-input" placeholder="New tag name">
+                    <input type="color" id="new-tag-color" class="color-picker" value="#000000">
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="addTag()">Add Tag</button>
+                </div> -->
+            </div>
             <button type="submit" class="btn btn-primary">Save Task</button>
         </form>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".tag-label").forEach(function(label) {
+            let color = label.getAttribute("data-color");
+            if (color) {
+                label.style.backgroundColor = color;
+            }
+        });
+    });
+    // function addTag() {
+    //     let tagName = document.getElementById("new-tag-name").value;
+    //     let tagColor = document.getElementById("new-tag-color").value;
+
+    //     fetch("/tasks/add_tag/", {
+    //         method: "POST",
+    //         headers: {
+    //             "X-CSRFToken": "{{ csrf_token }}",
+    //             "Content-Type": "application/json"
+    //         },
+    //         body: JSON.stringify({ name: tagName, color: tagColor })
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data.success) {
+    //             let checkbox = document.createElement("input");
+    //             checkbox.type = "checkbox";
+    //             checkbox.name = "tags";
+    //             checkbox.value = data.tag_id;
+    //             checkbox.checked = true;
+
+    //             let label = document.createElement("label");
+    //             label.textContent = tagName;
+    //             label.style.color = tagColor;
+
+    //             let container = document.getElementById("id_tags");
+    //             container.appendChild(checkbox);
+    //             container.appendChild(label);
+    //         } else {
+    //             alert(data.error);
+    //         }
+    //     });
+    // }
+</script>
 
 {% endblock %}
